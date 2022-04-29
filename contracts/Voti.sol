@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-// import "truffle/Console.sol";
-
 contract Voti {
     address public owner;
 
@@ -38,16 +36,22 @@ contract Voti {
     }
 
 
-    modifer isOwner() {}
-
-    modifier isRegistered() {
-        require(users[msg.sender].address == msg.sender, 'address not registered');
+    modifier isOwner() {
         _;
     }
 
-    modifier onlyVoteOnce() {}
+    modifier isRegistered() {
+        require(users[msg.sender].user == msg.sender, 'address not registered');
+        _;
+    }
 
-    modifier campaignExist() {}
+    modifier onlyVoteOnce() {
+        _;
+    }
+
+    modifier campaignExist() {
+        _;
+    }
 
 
     constructor() {
@@ -56,22 +60,27 @@ contract Voti {
 
 
 
-    function registerVoter() public returns (User) {
-        // require(users[msg.sender].address == address(0), 'address already registered');
+    function registerVoter() public returns (User memory) {
+      require(users[msg.sender].user == address(0), 'address already registered');
+      
+      userCount += 1;
 
-        // users[msg.sender] = User({
-        //     id: userCount,
-        //     user: msg.sender 
-        // });
+      users[msg.sender] = User({
+        id: userCount,
+        user: msg.sender,
+        voted: false,
+        campaignId: 0
+      });
 
-        // return users[msg.sender];
+
+      return users[msg.sender];
     }
 
     // function submitCampaign(string _name) public isRegistered returns (Campaign) {}
 
     // function approveCampaign() private isOwner {}
 
-    function registerVote(unit _campaignId) public campaignExist onlyVoteOnce {}
+    function registerVote(uint _campaignId) public campaignExist onlyVoteOnce {}
 
     function collate() internal isOwner {}
 
